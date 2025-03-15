@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Book Shelf</title>
+    </head>
+    <body>
+        <h1>Book Shelf</h1>
+        <a href="{% url 'add' %}">Add book</a>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name and Author</th>
+                    <th>Book Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in page_obj %}
+                    <tr>
+                        <td>{{ book }}</td>
+                        <td>{{ book.price }}$</td>
+                        <td>
+                            <a href="{% url 'edit' book.id %}">Edit</a>
+                            <a href="{% url 'delete' book.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Pagination controls -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </body>
+</html>
