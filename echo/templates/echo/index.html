@@ -4,27 +4,46 @@
     <head>
         <meta charset="utf-8" />
         <title>Book Shelf</title>
+        <link rel="stylesheet" href="{% static 'echo/css/index.css' %}">
     </head>
     <body>
-        <h1>Book Shelf</h1>
-        <a href="{% url 'add' %}">Add book</a>
+        <nav class="navbar">
+            <a href="{% url 'index' %}" class="nav favicon">Book Shelf</a>
+            <div class="nav users">
+                {% if user.is_authenticated %}
+                    <span>Welcome, {{ user.username }} ({{ user.role }})</span>
+                    <a href="{% url 'logOut' %}">Log Out</a>
+                {% else %}
+                    <a href="{% url 'logIn' %}" class="nav users log-in">Log In</a>
+                    <a href="{% url 'signUp' %}" class="nav users sign-up">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+        {% if user.is_authenticated %}
+            <div class="btn add-book">
+                <a href="{% url 'add' %}">Add book</a>
+            </div>
+        {% endif %}
         <table border="1">
             <thead>
                 <tr>
                     <th>Name and Author</th>
                     <th>Book Price</th>
-                    <th>Actions</th>
+                    {% if user.role == 'admin' %}<th>Actions</th>{% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for book in page_obj %}
                     <tr>
                         <td>{{ book }}</td>
-                        <td>{{ book.price }}$</td>
-                        <td>
-                            <a href="{% url 'edit' book.id %}">Edit</a>
-                            <a href="{% url 'delete' book.id %}">Delete</a>
-                        </td>
+                        <td>{{ book.price }} USD</td>
+                        <!-- Admin user can edit and delete books -->
+                        {% if user.role == 'admin' %}
+                            <td>
+                                <a href="{% url 'edit' book.id %}">Edit</a>
+                                <a href="{% url 'delete' book.id %}">Delete</a>
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
