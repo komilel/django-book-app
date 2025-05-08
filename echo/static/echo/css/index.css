@@ -9,3 +9,28 @@ body {
 
     margin-bottom: 0.5em;
 }
+
+.favicon {
+    font-size: 2em;
+    font-style: italic;
+    text-decoration: none;
+}
+
+.cart-actions form, .cart-actions a {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+button {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.add-book {
+    margin: 0.25em 0;
+}

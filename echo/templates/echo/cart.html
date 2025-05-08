@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Cart - Book Shelf</title>
+        <link rel="stylesheet" href="{% static 'echo/css/index.css' %}">
+    </head>
+    <body>
+        <nav class="navbar">
+            <a href="{% url 'index' %}" class="nav favicon">Book Shelf</a>
+            <div class="nav users">
+                {% if user.is_authenticated %}
+                    <span>Welcome, {{ user.username }} ({{ user.role }})</span>
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'cart' %}">Cart</a>
+                    <a href="{% url 'order_history' %}">Order History</a>
+                    <a href="{% url 'logOut' %}">Log Out</a>
+                {% else %}
+                    <a href="{% url 'logIn' %}" class="nav users log-in">Log In</a>
+                    <a href="{% url 'signUp' %}" class="nav users sign-up">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+        <h1>Your Cart</h1>
+        {% if cart_items %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Name and Author</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.name }} by {{ item.author }}</td>
+                            <td>{{ item.price|floatformat:2 }} USD</td>
+                            <td>
+                                <form method="post"
+                                      action="{% url 'update_quantity' item.book_id %}"
+                                      style="display:inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="decrease">
+                                    <button type="submit" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
+                                </form>
+                                {{ item.quantity }}
+                                <form method="post"
+                                      action="{% url 'update_quantity' item.book_id %}"
+                                      style="display:inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="increase">
+                                    <button type="submit">+</button>
+                                </form>
+                            </td>
+                            <td>{{ item.total|floatformat:2 }} USD</td>
+                            <td>
+                                <form method="post"
+                                      action="{% url 'delete_from_cart' item.book_id %}"
+                                      style="display:inline">
+                                    {% csrf_token %}
+                                    <button type="submit">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="cart-summary">
+                <p>
+                    <strong>Total Cart Price: {{ total_cart_price|floatformat:2 }} USD</strong>
+                </p>
+            </div>
+            <div class="cart-actions">
+                <form method="post" action="{% url 'place_order' %}">
+                    {% csrf_token %}
+                    <button type="submit">Place Order</button>
+                </form>
+                <form method="post" action="{% url 'clear_cart' %}">
+                    {% csrf_token %}
+                    <button type="submit">Clear Cart</button>
+                </form>
+            </div>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Continue Shopping</a>
+        {% else %}
+            <p>Your cart is empty.</p>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Browse Books</a>
+        {% endif %}
+    </body>
+</html>

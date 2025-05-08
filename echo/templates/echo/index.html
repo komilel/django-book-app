@@ -12,6 +12,9 @@
             <div class="nav users">
                 {% if user.is_authenticated %}
                     <span>Welcome, {{ user.username }} ({{ user.role }})</span>
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'cart' %}">Cart</a>
+                    <a href="{% url 'order_history' %}">Order History</a>
                     <a href="{% url 'logOut' %}">Log Out</a>
                 {% else %}
                     <a href="{% url 'logIn' %}" class="nav users log-in">Log In</a>
@@ -19,6 +22,7 @@
                 {% endif %}
             </div>
         </nav>
+        {% if confirmation_message %}<div class="alert alert-success">{{ confirmation_message }}</div>{% endif %}
         {% if user.is_authenticated %}
             <div class="btn add-book">
                 <a href="{% url 'add' %}">Add book</a>
@@ -30,6 +34,7 @@
                     <th>Name and Author</th>
                     <th>Book Price</th>
                     {% if user.role == 'admin' %}<th>Actions</th>{% endif %}
+                    <th>Cart</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,6 +49,12 @@
                                 <a href="{% url 'delete' book.id %}">Delete</a>
                             </td>
                         {% endif %}
+                        <td>
+                            <form method="post" action="{% url 'add_to_cart' book.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Add to Cart</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

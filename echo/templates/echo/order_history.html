@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Order History - Book Shelf</title>
+        <link rel="stylesheet" href="{% static 'echo/css/index.css' %}">
+    </head>
+    <body>
+        <nav class="navbar">
+            <a href="{% url 'index' %}" class="nav favicon">Book Shelf</a>
+            <div class="nav users">
+                {% if user.is_authenticated %}
+                    <span>Welcome, {{ user.username }} ({{ user.role }})</span>
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'cart' %}">Cart</a>
+                    <a href="{% url 'order_history' %}">Order History</a>
+                    <a href="{% url 'logOut' %}">Log Out</a>
+                {% else %}
+                    <a href="{% url 'logIn' %}" class="nav users log-in">Log In</a>
+                    <a href="{% url 'signUp' %}" class="nav users sign-up">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+        <h1>Your Order History</h1>
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order">
+                    <h3>Order #{{ order.id }} - {{ order.created_at|date:"F d, Y H:i" }}</h3>
+                    <p><strong>Total Price: {{ order.total_price|floatformat:2 }} USD</strong></p>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Name and Author</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                                <tr>
+                                    <td>{{ item.book_name }} by {{ item.book_author }}</td>
+                                    <td>{{ item.price|floatformat:2 }} USD</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.total|floatformat:2 }} USD</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>You have no orders yet.</p>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Browse Books</a>
+        {% endif %}
+    </body>
+</html>
