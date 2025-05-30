@@ -148,7 +148,7 @@ def add_to_cart(request, book_id):
 
     # Save the updated cart back to the session
     request.session['cart'] = cart
-    request.session.modified = True  # Ensure session is marked as modified
+    request.session.modified = True
     return redirect('index')
 
 
